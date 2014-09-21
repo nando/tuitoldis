@@ -1,0 +1,40 @@
+#!/usr/bin/env ruby
+require 'optparse'
+
+options = {}
+OptionParser.new do |opts|
+  opts.banner = "Usage: tuitoldis textfile [options]"
+
+  opts.on('-v', '--[no-]verbose', "Run verbosely") do |v|
+    options[:verbose] = v
+  end
+  opts.on('--dry', '-d', "Do everything but don't tweet anything") do
+    options[:dry] = true
+  end
+end.parse!
+
+if (filepath = ARGV.shift) and File.exists?(filepath)
+  puts "WARNING: dry mode requested (so nothing will be tuited)." if options[:dry]
+  print 'Press ENTER to start tuiting...'
+puts options
+  gets
+  File.open(filepath).each do |tuit|
+    tuit.strip!
+    unless tuit.empty?
+      cmd = 'echo "'+tuit+'" | twidge update'
+      feedback = options[:verbose] ? cmd : tuit
+
+      system 'clear'
+      if options[:dry]
+        puts feedback
+      else
+        puts tuit
+        system cmd
+      end
+      
+      gets      
+    end
+  end
+else
+  puts "File not found '#{filepath}'!"
+end
