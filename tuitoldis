@@ -21,7 +21,7 @@ puts options
   File.open(filepath).each do |tuit|
     tuit.strip!
     unless tuit.empty?
-      cmd = 'echo "'+tuit+'" | twidge update'
+      cmd = 'echo "'+tuit.gsub('"', '\"')+'" | twidge update'
       feedback = options[:verbose] ? cmd : tuit
 
       system 'clear'
